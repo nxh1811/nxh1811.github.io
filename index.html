@@ -4,12 +4,9 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
         <meta name="description" content="xH all in one: All in one toolbox for social media management" />
         <title>xH all in one</title>
-        <link rel="icon" href="./logo.svg" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%231677ff'>x</text></svg>" />
         <style>
             * {
                 margin: 0;
@@ -26,9 +23,11 @@
                 --text-light: #ffffff;
                 --text-gray: #8892b0;
                 --border-color: rgba(22, 119, 255, 0.2);
-                --success: #52c41a;
-                --warning: #faad14;
-                --error: #ff4d4f;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
             }
 
             body {
@@ -36,12 +35,11 @@
                 color: var(--text-light);
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
                 -webkit-font-smoothing: antialiased;
-                overflow: hidden;
             }
 
             #root {
-                width: 100vw;
-                height: 100vh;
+                width: 100%;
+                height: 100%;
                 display: flex;
                 flex-direction: column;
             }
@@ -72,7 +70,7 @@
                 justify-content: center;
                 align-items: center;
                 font-weight: bold;
-                font-size: 20px;
+                font-size: 24px;
                 color: white;
             }
 
@@ -102,16 +100,6 @@
                 display: flex;
                 align-items: center;
                 gap: 8px;
-            }
-
-            .btn-primary {
-                background: linear-gradient(135deg, var(--primary), var(--primary-light));
-                color: white;
-            }
-
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 16px rgba(22, 119, 255, 0.3);
             }
 
             .btn-secondary {
@@ -171,9 +159,9 @@
                 padding-left: 13px;
             }
 
-            .sidebar-item i {
-                width: 20px;
-                text-align: center;
+            .sidebar-item span:first-child {
+                font-size: 18px;
+                width: 24px;
             }
 
             /* Content Area */
@@ -239,7 +227,6 @@
             .stat-icon {
                 font-size: 32px;
                 margin-bottom: 12px;
-                color: var(--primary-light);
             }
 
             .stat-label {
@@ -266,10 +253,6 @@
                 display: flex;
                 align-items: center;
                 gap: 8px;
-            }
-
-            .section-title i {
-                color: var(--primary-light);
             }
 
             .feature-grid {
@@ -299,7 +282,6 @@
             .feature-icon {
                 font-size: 48px;
                 margin-bottom: 12px;
-                color: var(--primary-light);
             }
 
             .feature-name {
@@ -333,9 +315,8 @@
                 border-bottom: 1px solid var(--border-color);
             }
 
-            .page-header i {
+            .page-header-icon {
                 font-size: 32px;
-                color: var(--primary-light);
             }
 
             .page-header-content h1 {
@@ -453,14 +434,8 @@
                     <div class="header-title">xH all in one</div>
                 </div>
                 <div class="header-right">
-                    <button class="btn btn-secondary">
-                        <i class="fas fa-bell"></i>
-                        Notifications
-                    </button>
-                    <button class="btn btn-secondary">
-                        <i class="fas fa-user-circle"></i>
-                        Profile
-                    </button>
+                    <button class="btn btn-secondary">🔔 Notifications</button>
+                    <button class="btn btn-secondary">👤 Profile</button>
                 </div>
             </div>
 
@@ -470,27 +445,27 @@
                 <div class="sidebar">
                     <ul class="sidebar-menu">
                         <li class="sidebar-item active" onclick="showSection(event, 'dashboard')">
-                            <i class="fas fa-home"></i>
+                            <span>🏠</span>
                             <span>Dashboard</span>
                         </li>
                         <li class="sidebar-item" onclick="showSection(event, 'facebook')">
-                            <i class="fab fa-facebook"></i>
+                            <span>📘</span>
                             <span>Facebook</span>
                         </li>
                         <li class="sidebar-item" onclick="showSection(event, 'instagram')">
-                            <i class="fab fa-instagram"></i>
+                            <span>📸</span>
                             <span>Instagram</span>
                         </li>
                         <li class="sidebar-item" onclick="showSection(event, 'threads')">
-                            <i class="fab fa-threads"></i>
+                            <span>💬</span>
                             <span>Threads</span>
                         </li>
                         <li class="sidebar-item" onclick="showSection(event, 'tools')">
-                            <i class="fas fa-toolbox"></i>
+                            <span>🛠️</span>
                             <span>Tools</span>
                         </li>
                         <li class="sidebar-item" onclick="showSection(event, 'settings')">
-                            <i class="fas fa-cog"></i>
+                            <span>⚙️</span>
                             <span>Settings</span>
                         </li>
                     </ul>
@@ -529,13 +504,10 @@
                         </div>
 
                         <div class="features-section">
-                            <div class="section-title">
-                                <i class="fas fa-star"></i>
-                                Featured Platforms
-                            </div>
+                            <div class="section-title">⭐ Featured Platforms</div>
                             <div class="feature-grid">
                                 <div class="feature-card" onclick="showSection(event, 'facebook')">
-                                    <div class="feature-icon">📘</div>
+                                    <div class="feature-icon">📚</div>
                                     <div class="feature-name">Facebook</div>
                                     <div class="feature-desc">Manage pages, posts, and audience engagement</div>
                                 </div>
@@ -545,7 +517,7 @@
                                     <div class="feature-desc">Create, schedule, and analyze posts</div>
                                 </div>
                                 <div class="feature-card" onclick="showSection(event, 'threads')">
-                                    <div class="feature-icon">💬</div>
+                                    <div class="feature-icon">💭</div>
                                     <div class="feature-name">Threads</div>
                                     <div class="feature-desc">Manage conversations and messages</div>
                                 </div>
@@ -553,10 +525,7 @@
                         </div>
 
                         <div class="features-section">
-                            <div class="section-title">
-                                <i class="fas fa-wrench"></i>
-                                Quick Tools
-                            </div>
+                            <div class="section-title">🔧 Quick Tools</div>
                             <div class="feature-grid">
                                 <div class="feature-card">
                                     <div class="feature-icon">⬇️</div>
@@ -580,215 +549,95 @@
                     <!-- Facebook Section -->
                     <div id="facebook" class="page-section">
                         <div class="page-header">
-                            <i class="fab fa-facebook"></i>
+                            <span class="page-header-icon">📘</span>
                             <div class="page-header-content">
                                 <h1>Facebook Manager</h1>
                                 <p>Manage your Facebook pages and posts</p>
                             </div>
                         </div>
                         <div class="tools-grid">
-                            <div class="tool-card">
-                                <div class="tool-icon">📝</div>
-                                <div class="tool-name">Create Post</div>
-                                <div class="tool-desc">Write and publish a new post</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">📊</div>
-                                <div class="tool-name">Analytics</div>
-                                <div class="tool-desc">View your page performance</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">👥</div>
-                                <div class="tool-name">Audience</div>
-                                <div class="tool-desc">Manage your followers</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">💬</div>
-                                <div class="tool-name">Messages</div>
-                                <div class="tool-desc">Chat with your audience</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">⬇️</div>
-                                <div class="tool-name">Download Videos</div>
-                                <div class="tool-desc">Download videos from Facebook</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🏯</div>
-                                <div class="tool-name">Ads Manager</div>
-                                <div class="tool-desc">Create and manage ads</div>
-                            </div>
+                            <div class="tool-card"><div class="tool-icon">✍️</div><div class="tool-name">Create Post</div><div class="tool-desc">Write and publish a new post</div></div>
+                            <div class="tool-card"><div class="tool-icon">📊</div><div class="tool-name">Analytics</div><div class="tool-desc">View your page performance</div></div>
+                            <div class="tool-card"><div class="tool-icon">👥</div><div class="tool-name">Audience</div><div class="tool-desc">Manage your followers</div></div>
+                            <div class="tool-card"><div class="tool-icon">💬</div><div class="tool-name">Messages</div><div class="tool-desc">Chat with your audience</div></div>
+                            <div class="tool-card"><div class="tool-icon">⬇️</div><div class="tool-name">Download Videos</div><div class="tool-desc">Download videos from Facebook</div></div>
+                            <div class="tool-card"><div class="tool-icon">🎯</div><div class="tool-name">Ads Manager</div><div class="tool-desc">Create and manage ads</div></div>
                         </div>
                     </div>
 
                     <!-- Instagram Section -->
                     <div id="instagram" class="page-section">
                         <div class="page-header">
-                            <i class="fab fa-instagram"></i>
+                            <span class="page-header-icon">📸</span>
                             <div class="page-header-content">
                                 <h1>Instagram Manager</h1>
                                 <p>Manage your Instagram account and posts</p>
                             </div>
                         </div>
                         <div class="tools-grid">
-                            <div class="tool-card">
-                                <div class="tool-icon">📷</div>
-                                <div class="tool-name">Create Post</div>
-                                <div class="tool-desc">Upload and share a new post</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🎬</div>
-                                <div class="tool-name">Create Reel</div>
-                                <div class="tool-desc">Create and publish a new reel</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">📊</div>
-                                <div class="tool-name">Analytics</div>
-                                <div class="tool-desc">Track your account metrics</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">👥</div>
-                                <div class="tool-name">Followers</div>
-                                <div class="tool-desc">Manage your followers</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">❤️</div>
-                                <div class="tool-name">Engagement</div>
-                                <div class="tool-desc">View likes and comments</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">⬇️</div>
-                                <div class="tool-name">Download</div>
-                                <div class="tool-desc">Download posts and reels</div>
-                            </div>
+                            <div class="tool-card"><div class="tool-icon">📷</div><div class="tool-name">Create Post</div><div class="tool-desc">Upload and share a new post</div></div>
+                            <div class="tool-card"><div class="tool-icon">🎬</div><div class="tool-name">Create Reel</div><div class="tool-desc">Create and publish a new reel</div></div>
+                            <div class="tool-card"><div class="tool-icon">📊</div><div class="tool-name">Analytics</div><div class="tool-desc">Track your account metrics</div></div>
+                            <div class="tool-card"><div class="tool-icon">👥</div><div class="tool-name">Followers</div><div class="tool-desc">Manage your followers</div></div>
+                            <div class="tool-card"><div class="tool-icon">❤️</div><div class="tool-name">Engagement</div><div class="tool-desc">View likes and comments</div></div>
+                            <div class="tool-card"><div class="tool-icon">⬇️</div><div class="tool-name">Download</div><div class="tool-desc">Download posts and reels</div></div>
                         </div>
                     </div>
 
                     <!-- Threads Section -->
                     <div id="threads" class="page-section">
                         <div class="page-header">
-                            <i class="fab fa-threads"></i>
+                            <span class="page-header-icon">💬</span>
                             <div class="page-header-content">
                                 <h1>Threads Manager</h1>
                                 <p>Manage your Threads conversations</p>
                             </div>
                         </div>
                         <div class="tools-grid">
-                            <div class="tool-card">
-                                <div class="tool-icon">✍️</div>
-                                <div class="tool-name">Create Thread</div>
-                                <div class="tool-desc">Start a new thread discussion</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">💬</div>
-                                <div class="tool-name">Messages</div>
-                                <div class="tool-desc">View and reply to messages</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🔔</div>
-                                <div class="tool-name">Notifications</div>
-                                <div class="tool-desc">Manage notifications</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">⭐</div>
-                                <div class="tool-name">Favorites</div>
-                                <div class="tool-desc">Save important threads</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">👥</div>
-                                <div class="tool-name">Followers</div>
-                                <div class="tool-desc">Manage your network</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🔍</div>
-                                <div class="tool-name">Search</div>
-                                <div class="tool-desc">Find threads and users</div>
-                            </div>
+                            <div class="tool-card"><div class="tool-icon">✏️</div><div class="tool-name">Create Thread</div><div class="tool-desc">Start a new thread discussion</div></div>
+                            <div class="tool-card"><div class="tool-icon">💬</div><div class="tool-name">Messages</div><div class="tool-desc">View and reply to messages</div></div>
+                            <div class="tool-card"><div class="tool-icon">🔔</div><div class="tool-name">Notifications</div><div class="tool-desc">Manage notifications</div></div>
+                            <div class="tool-card"><div class="tool-icon">⭐</div><div class="tool-name">Favorites</div><div class="tool-desc">Save important threads</div></div>
+                            <div class="tool-card"><div class="tool-icon">👥</div><div class="tool-name">Followers</div><div class="tool-desc">Manage your network</div></div>
+                            <div class="tool-card"><div class="tool-icon">🔍</div><div class="tool-name">Search</div><div class="tool-desc">Find threads and users</div></div>
                         </div>
                     </div>
 
                     <!-- Tools Section -->
                     <div id="tools" class="page-section">
                         <div class="page-header">
-                            <i class="fas fa-toolbox"></i>
+                            <span class="page-header-icon">🛠️</span>
                             <div class="page-header-content">
                                 <h1>Tools & Utilities</h1>
                                 <p>Powerful tools for social media management</p>
                             </div>
                         </div>
                         <div class="tools-grid">
-                            <div class="tool-card">
-                                <div class="tool-icon">⬇️</div>
-                                <div class="tool-name">Bulk Downloader</div>
-                                <div class="tool-desc">Download multiple posts and videos</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">✏️</div>
-                                <div class="tool-name">Caption Generator</div>
-                                <div class="tool-desc">Generate engaging captions with AI</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">📅</div>
-                                <div class="tool-name">Schedule Posts</div>
-                                <div class="tool-desc">Plan and schedule your content</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🎨</div>
-                                <div class="tool-name">Image Editor</div>
-                                <div class="tool-desc">Edit and enhance your images</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🔍</div>
-                                <div class="tool-name">Hashtag Analyzer</div>
-                                <div class="tool-desc">Analyze trending hashtags</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">📊</div>
-                                <div class="tool-name">Analytics</div>
-                                <div class="tool-desc">Track your overall performance</div>
-                            </div>
+                            <div class="tool-card"><div class="tool-icon">⬇️</div><div class="tool-name">Bulk Downloader</div><div class="tool-desc">Download multiple posts and videos</div></div>
+                            <div class="tool-card"><div class="tool-icon">✏️</div><div class="tool-name">Caption Generator</div><div class="tool-desc">Generate engaging captions with AI</div></div>
+                            <div class="tool-card"><div class="tool-icon">📅</div><div class="tool-name">Schedule Posts</div><div class="tool-desc">Plan and schedule your content</div></div>
+                            <div class="tool-card"><div class="tool-icon">🎨</div><div class="tool-name">Image Editor</div><div class="tool-desc">Edit and enhance your images</div></div>
+                            <div class="tool-card"><div class="tool-icon">🔍</div><div class="tool-name">Hashtag Analyzer</div><div class="tool-desc">Analyze trending hashtags</div></div>
+                            <div class="tool-card"><div class="tool-icon">📊</div><div class="tool-name">Analytics</div><div class="tool-desc">Track your overall performance</div></div>
                         </div>
                     </div>
 
                     <!-- Settings Section -->
                     <div id="settings" class="page-section">
                         <div class="page-header">
-                            <i class="fas fa-cog"></i>
+                            <span class="page-header-icon">⚙️</span>
                             <div class="page-header-content">
                                 <h1>Settings</h1>
                                 <p>Configure your preferences</p>
                             </div>
                         </div>
                         <div class="tools-grid">
-                            <div class="tool-card">
-                                <div class="tool-icon">👤</div>
-                                <div class="tool-name">Profile Settings</div>
-                                <div class="tool-desc">Manage your profile information</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🔐</div>
-                                <div class="tool-name">Security</div>
-                                <div class="tool-desc">Update password and security settings</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🔔</div>
-                                <div class="tool-name">Notifications</div>
-                                <div class="tool-desc">Configure notification preferences</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🌙</div>
-                                <div class="tool-name">Theme</div>
-                                <div class="tool-desc">Choose your preferred theme</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">🌐</div>
-                                <div class="tool-name">Language</div>
-                                <div class="tool-desc">Select your language</div>
-                            </div>
-                            <div class="tool-card">
-                                <div class="tool-icon">💾</div>
-                                <div class="tool-name">Data & Storage</div>
-                                <div class="tool-desc">Manage your data and cache</div>
-                            </div>
+                            <div class="tool-card"><div class="tool-icon">👤</div><div class="tool-name">Profile Settings</div><div class="tool-desc">Manage your profile information</div></div>
+                            <div class="tool-card"><div class="tool-icon">🔐</div><div class="tool-name">Security</div><div class="tool-desc">Update password and security settings</div></div>
+                            <div class="tool-card"><div class="tool-icon">🔔</div><div class="tool-name">Notifications</div><div class="tool-desc">Configure notification preferences</div></div>
+                            <div class="tool-card"><div class="tool-icon">🌙</div><div class="tool-name">Theme</div><div class="tool-desc">Choose your preferred theme</div></div>
+                            <div class="tool-card"><div class="tool-icon">🌐</div><div class="tool-name">Language</div><div class="tool-desc">Select your language</div></div>
+                            <div class="tool-card"><div class="tool-icon">💾</div><div class="tool-name">Data & Storage</div><div class="tool-desc">Manage your data and cache</div></div>
                         </div>
                     </div>
                 </div>

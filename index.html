@@ -9,9 +9,7 @@
         <meta name="description" content="xH all in one: All in one toolbox for social media management" />
         <title>xH all in one</title>
         <link rel="icon" href="./logo.svg" />
-        <link rel="manifest" href="./manifest.webmanifest">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-        <script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script>
         <style>
             * {
                 margin: 0;
@@ -471,27 +469,27 @@
                 <!-- Sidebar -->
                 <div class="sidebar">
                     <ul class="sidebar-menu">
-                        <li class="sidebar-item active" onclick="showSection('dashboard')">
+                        <li class="sidebar-item active" onclick="showSection(event, 'dashboard')">
                             <i class="fas fa-home"></i>
                             <span>Dashboard</span>
                         </li>
-                        <li class="sidebar-item" onclick="showSection('facebook')">
+                        <li class="sidebar-item" onclick="showSection(event, 'facebook')">
                             <i class="fab fa-facebook"></i>
                             <span>Facebook</span>
                         </li>
-                        <li class="sidebar-item" onclick="showSection('instagram')">
+                        <li class="sidebar-item" onclick="showSection(event, 'instagram')">
                             <i class="fab fa-instagram"></i>
                             <span>Instagram</span>
                         </li>
-                        <li class="sidebar-item" onclick="showSection('threads')">
+                        <li class="sidebar-item" onclick="showSection(event, 'threads')">
                             <i class="fab fa-threads"></i>
                             <span>Threads</span>
                         </li>
-                        <li class="sidebar-item" onclick="showSection('tools')">
+                        <li class="sidebar-item" onclick="showSection(event, 'tools')">
                             <i class="fas fa-toolbox"></i>
                             <span>Tools</span>
                         </li>
-                        <li class="sidebar-item" onclick="showSection('settings')">
+                        <li class="sidebar-item" onclick="showSection(event, 'settings')">
                             <i class="fas fa-cog"></i>
                             <span>Settings</span>
                         </li>
@@ -536,17 +534,17 @@
                                 Featured Platforms
                             </div>
                             <div class="feature-grid">
-                                <div class="feature-card" onclick="showSection('facebook')">
+                                <div class="feature-card" onclick="showSection(event, 'facebook')">
                                     <div class="feature-icon">📘</div>
                                     <div class="feature-name">Facebook</div>
                                     <div class="feature-desc">Manage pages, posts, and audience engagement</div>
                                 </div>
-                                <div class="feature-card" onclick="showSection('instagram')">
+                                <div class="feature-card" onclick="showSection(event, 'instagram')">
                                     <div class="feature-icon">📷</div>
                                     <div class="feature-name">Instagram</div>
                                     <div class="feature-desc">Create, schedule, and analyze posts</div>
                                 </div>
-                                <div class="feature-card" onclick="showSection('threads')">
+                                <div class="feature-card" onclick="showSection(event, 'threads')">
                                     <div class="feature-icon">💬</div>
                                     <div class="feature-name">Threads</div>
                                     <div class="feature-desc">Manage conversations and messages</div>
@@ -615,7 +613,7 @@
                                 <div class="tool-desc">Download videos from Facebook</div>
                             </div>
                             <div class="tool-card">
-                                <div class="tool-icon">🎯</div>
+                                <div class="tool-icon">🏯</div>
                                 <div class="tool-name">Ads Manager</div>
                                 <div class="tool-desc">Create and manage ads</div>
                             </div>
@@ -798,7 +796,9 @@
         </div>
 
         <script>
-            function showSection(sectionId) {
+            function showSection(event, sectionId) {
+                event.preventDefault();
+                
                 // Hide all sections
                 const sections = document.querySelectorAll('.dashboard, .page-section');
                 sections.forEach(section => section.classList.remove('active'));
@@ -814,7 +814,9 @@
                 }
 
                 // Add active class to clicked menu item
-                event.target.closest('.sidebar-item')?.classList.add('active');
+                if (event.currentTarget) {
+                    event.currentTarget.classList.add('active');
+                }
             }
         </script>
     </body>

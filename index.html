@@ -10,6 +10,7 @@
         <title>xH all in one</title>
         <link rel="icon" href="./logo.svg" />
         <link rel="manifest" href="./manifest.webmanifest">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script>
         <style>
             * {
@@ -17,54 +18,804 @@
                 padding: 0;
                 box-sizing: border-box;
             }
+
+            :root {
+                --primary: #1677ff;
+                --primary-light: #40a9ff;
+                --primary-dark: #0958ca;
+                --bg-dark: #0a0e27;
+                --bg-darker: #05070f;
+                --text-light: #ffffff;
+                --text-gray: #8892b0;
+                --border-color: rgba(22, 119, 255, 0.2);
+                --success: #52c41a;
+                --warning: #faad14;
+                --error: #ff4d4f;
+            }
+
             body {
-                background-color: #0a0e27;
-                color: #ffffff;
+                background-color: var(--bg-darker);
+                color: var(--text-light);
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
                 -webkit-font-smoothing: antialiased;
+                overflow: hidden;
             }
+
             #root {
                 width: 100vw;
                 height: 100vh;
                 display: flex;
-                justify-content: center;
-                align-items: center;
+                flex-direction: column;
             }
-            ._init_loading {
+
+            /* Header */
+            .header {
+                background: linear-gradient(135deg, rgba(22, 119, 255, 0.1), rgba(64, 169, 255, 0.05));
+                border-bottom: 1px solid var(--border-color);
+                padding: 16px 24px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                backdrop-filter: blur(10px);
+            }
+
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .logo {
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                border-radius: 8px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                flex-direction: column;
-                text-align: center;
+                font-weight: bold;
+                font-size: 20px;
+                color: white;
             }
-            ._init_loading h1 {
-                font-size: 48px;
-                margin-bottom: 20px;
-                background: linear-gradient(135deg, #1677ff, #40a9ff);
+
+            .header-title {
+                font-size: 24px;
+                font-weight: 600;
+                background: linear-gradient(135deg, var(--primary), var(--primary-light));
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
             }
-            ._loading_spinner {
-                width: 50px;
-                height: 50px;
-                border: 4px solid rgba(22, 119, 255, 0.2);
-                border-top: 4px solid #1677ff;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
+
+            .header-right {
+                display: flex;
+                gap: 16px;
+                align-items: center;
             }
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
+
+            .btn {
+                padding: 8px 16px;
+                border-radius: 6px;
+                border: none;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                color: white;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(22, 119, 255, 0.3);
+            }
+
+            .btn-secondary {
+                background: rgba(22, 119, 255, 0.1);
+                color: var(--primary-light);
+                border: 1px solid var(--border-color);
+            }
+
+            .btn-secondary:hover {
+                background: rgba(22, 119, 255, 0.2);
+            }
+
+            /* Main Container */
+            .container {
+                display: flex;
+                flex: 1;
+                overflow: hidden;
+            }
+
+            /* Sidebar */
+            .sidebar {
+                width: 260px;
+                background: rgba(10, 14, 39, 0.8);
+                border-right: 1px solid var(--border-color);
+                padding: 24px 0;
+                overflow-y: auto;
+                backdrop-filter: blur(10px);
+            }
+
+            .sidebar-menu {
+                list-style: none;
+            }
+
+            .sidebar-item {
+                padding: 12px 16px;
+                margin: 8px 8px;
+                cursor: pointer;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: var(--text-gray);
+                transition: all 0.3s;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .sidebar-item:hover {
+                background: rgba(22, 119, 255, 0.1);
+                color: var(--primary-light);
+            }
+
+            .sidebar-item.active {
+                background: rgba(22, 119, 255, 0.15);
+                color: var(--primary);
+                border-left: 3px solid var(--primary);
+                padding-left: 13px;
+            }
+
+            .sidebar-item i {
+                width: 20px;
+                text-align: center;
+            }
+
+            /* Content Area */
+            .content {
+                flex: 1;
+                overflow-y: auto;
+                padding: 32px;
+                background: var(--bg-darker);
+            }
+
+            /* Dashboard */
+            .dashboard {
+                display: none;
+            }
+
+            .dashboard.active {
+                display: block;
+                animation: fadeIn 0.3s ease-in;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .welcome-section {
+                margin-bottom: 32px;
+            }
+
+            .welcome-title {
+                font-size: 28px;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+
+            .welcome-subtitle {
+                color: var(--text-gray);
+                font-size: 14px;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 16px;
+                margin-bottom: 32px;
+            }
+
+            .stat-card {
+                background: linear-gradient(135deg, rgba(22, 119, 255, 0.1), rgba(64, 169, 255, 0.05));
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 20px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .stat-card:hover {
+                border-color: var(--primary-light);
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px rgba(22, 119, 255, 0.2);
+            }
+
+            .stat-icon {
+                font-size: 32px;
+                margin-bottom: 12px;
+                color: var(--primary-light);
+            }
+
+            .stat-label {
+                font-size: 12px;
+                color: var(--text-gray);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 8px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .features-section {
+                margin-top: 32px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .section-title i {
+                color: var(--primary-light);
+            }
+
+            .feature-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 16px;
+            }
+
+            .feature-card {
+                background: linear-gradient(135deg, rgba(22, 119, 255, 0.1), rgba(64, 169, 255, 0.05));
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 20px;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-decoration: none;
+                color: inherit;
+                display: block;
+            }
+
+            .feature-card:hover {
+                border-color: var(--primary-light);
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px rgba(22, 119, 255, 0.2);
+            }
+
+            .feature-icon {
+                font-size: 48px;
+                margin-bottom: 12px;
+                color: var(--primary-light);
+            }
+
+            .feature-name {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .feature-desc {
+                font-size: 13px;
+                color: var(--text-gray);
+                line-height: 1.5;
+            }
+
+            /* Page Sections */
+            .page-section {
+                display: none;
+            }
+
+            .page-section.active {
+                display: block;
+                animation: fadeIn 0.3s ease-in;
+            }
+
+            .page-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 32px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .page-header i {
+                font-size: 32px;
+                color: var(--primary-light);
+            }
+
+            .page-header-content h1 {
+                font-size: 28px;
+                margin-bottom: 4px;
+            }
+
+            .page-header-content p {
+                color: var(--text-gray);
+                font-size: 13px;
+            }
+
+            .tools-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 16px;
+            }
+
+            .tool-card {
+                background: linear-gradient(135deg, rgba(22, 119, 255, 0.1), rgba(64, 169, 255, 0.05));
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 20px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .tool-card:hover {
+                border-color: var(--primary-light);
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px rgba(22, 119, 255, 0.2);
+            }
+
+            .tool-icon {
+                font-size: 40px;
+                margin-bottom: 12px;
+            }
+
+            .tool-name {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .tool-desc {
+                font-size: 13px;
+                color: var(--text-gray);
+                line-height: 1.5;
+            }
+
+            /* Scrollbar */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: rgba(22, 119, 255, 0.3);
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: rgba(22, 119, 255, 0.5);
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .container {
+                    flex-direction: column;
+                }
+
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    border-right: none;
+                    border-bottom: 1px solid var(--border-color);
+                    display: flex;
+                    overflow-x: auto;
+                    padding: 12px 0;
+                }
+
+                .sidebar-menu {
+                    display: flex;
+                    gap: 8px;
+                    padding: 0 16px;
+                }
+
+                .sidebar-item {
+                    white-space: nowrap;
+                    margin: 0;
+                    padding: 8px 12px;
+                }
+
+                .content {
+                    padding: 16px;
+                }
+
+                .stats-grid,
+                .feature-grid,
+                .tools-grid {
+                    grid-template-columns: 1fr;
+                }
             }
         </style>
     </head>
     <body>
         <div id="root">
-            <div class="_init_loading">
-                <h1>xH all in one</h1>
-                <div class="_loading_spinner"></div>
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">xH</div>
+                    <div class="header-title">xH all in one</div>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-bell"></i>
+                        Notifications
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-user-circle"></i>
+                        Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Container -->
+            <div class="container">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item active" onclick="showSection('dashboard')">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </li>
+                        <li class="sidebar-item" onclick="showSection('facebook')">
+                            <i class="fab fa-facebook"></i>
+                            <span>Facebook</span>
+                        </li>
+                        <li class="sidebar-item" onclick="showSection('instagram')">
+                            <i class="fab fa-instagram"></i>
+                            <span>Instagram</span>
+                        </li>
+                        <li class="sidebar-item" onclick="showSection('threads')">
+                            <i class="fab fa-threads"></i>
+                            <span>Threads</span>
+                        </li>
+                        <li class="sidebar-item" onclick="showSection('tools')">
+                            <i class="fas fa-toolbox"></i>
+                            <span>Tools</span>
+                        </li>
+                        <li class="sidebar-item" onclick="showSection('settings')">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content -->
+                <div class="content">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard" class="dashboard active">
+                        <div class="welcome-section">
+                            <h1 class="welcome-title">👋 Welcome back!</h1>
+                            <p class="welcome-subtitle">All in one platform for managing your social media</p>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-label">Total Followers</div>
+                                <div class="stat-value">12.5K</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📱</div>
+                                <div class="stat-label">Active Accounts</div>
+                                <div class="stat-value">3</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-label">Total Posts</div>
+                                <div class="stat-value">156</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">❤️</div>
+                                <div class="stat-label">Total Engagement</div>
+                                <div class="stat-value">3.2K</div>
+                            </div>
+                        </div>
+
+                        <div class="features-section">
+                            <div class="section-title">
+                                <i class="fas fa-star"></i>
+                                Featured Platforms
+                            </div>
+                            <div class="feature-grid">
+                                <div class="feature-card" onclick="showSection('facebook')">
+                                    <div class="feature-icon">📘</div>
+                                    <div class="feature-name">Facebook</div>
+                                    <div class="feature-desc">Manage pages, posts, and audience engagement</div>
+                                </div>
+                                <div class="feature-card" onclick="showSection('instagram')">
+                                    <div class="feature-icon">📷</div>
+                                    <div class="feature-name">Instagram</div>
+                                    <div class="feature-desc">Create, schedule, and analyze posts</div>
+                                </div>
+                                <div class="feature-card" onclick="showSection('threads')">
+                                    <div class="feature-icon">💬</div>
+                                    <div class="feature-name">Threads</div>
+                                    <div class="feature-desc">Manage conversations and messages</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="features-section">
+                            <div class="section-title">
+                                <i class="fas fa-wrench"></i>
+                                Quick Tools
+                            </div>
+                            <div class="feature-grid">
+                                <div class="feature-card">
+                                    <div class="feature-icon">⬇️</div>
+                                    <div class="feature-name">Bulk Downloader</div>
+                                    <div class="feature-desc">Download multiple posts at once</div>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">✏️</div>
+                                    <div class="feature-name">Caption Generator</div>
+                                    <div class="feature-desc">Generate engaging captions with AI</div>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">📅</div>
+                                    <div class="feature-name">Schedule Posts</div>
+                                    <div class="feature-desc">Plan and schedule your content</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Facebook Section -->
+                    <div id="facebook" class="page-section">
+                        <div class="page-header">
+                            <i class="fab fa-facebook"></i>
+                            <div class="page-header-content">
+                                <h1>Facebook Manager</h1>
+                                <p>Manage your Facebook pages and posts</p>
+                            </div>
+                        </div>
+                        <div class="tools-grid">
+                            <div class="tool-card">
+                                <div class="tool-icon">📝</div>
+                                <div class="tool-name">Create Post</div>
+                                <div class="tool-desc">Write and publish a new post</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">📊</div>
+                                <div class="tool-name">Analytics</div>
+                                <div class="tool-desc">View your page performance</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">👥</div>
+                                <div class="tool-name">Audience</div>
+                                <div class="tool-desc">Manage your followers</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">💬</div>
+                                <div class="tool-name">Messages</div>
+                                <div class="tool-desc">Chat with your audience</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">⬇️</div>
+                                <div class="tool-name">Download Videos</div>
+                                <div class="tool-desc">Download videos from Facebook</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🎯</div>
+                                <div class="tool-name">Ads Manager</div>
+                                <div class="tool-desc">Create and manage ads</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instagram Section -->
+                    <div id="instagram" class="page-section">
+                        <div class="page-header">
+                            <i class="fab fa-instagram"></i>
+                            <div class="page-header-content">
+                                <h1>Instagram Manager</h1>
+                                <p>Manage your Instagram account and posts</p>
+                            </div>
+                        </div>
+                        <div class="tools-grid">
+                            <div class="tool-card">
+                                <div class="tool-icon">📷</div>
+                                <div class="tool-name">Create Post</div>
+                                <div class="tool-desc">Upload and share a new post</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🎬</div>
+                                <div class="tool-name">Create Reel</div>
+                                <div class="tool-desc">Create and publish a new reel</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">📊</div>
+                                <div class="tool-name">Analytics</div>
+                                <div class="tool-desc">Track your account metrics</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">👥</div>
+                                <div class="tool-name">Followers</div>
+                                <div class="tool-desc">Manage your followers</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">❤️</div>
+                                <div class="tool-name">Engagement</div>
+                                <div class="tool-desc">View likes and comments</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">⬇️</div>
+                                <div class="tool-name">Download</div>
+                                <div class="tool-desc">Download posts and reels</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Threads Section -->
+                    <div id="threads" class="page-section">
+                        <div class="page-header">
+                            <i class="fab fa-threads"></i>
+                            <div class="page-header-content">
+                                <h1>Threads Manager</h1>
+                                <p>Manage your Threads conversations</p>
+                            </div>
+                        </div>
+                        <div class="tools-grid">
+                            <div class="tool-card">
+                                <div class="tool-icon">✍️</div>
+                                <div class="tool-name">Create Thread</div>
+                                <div class="tool-desc">Start a new thread discussion</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">💬</div>
+                                <div class="tool-name">Messages</div>
+                                <div class="tool-desc">View and reply to messages</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🔔</div>
+                                <div class="tool-name">Notifications</div>
+                                <div class="tool-desc">Manage notifications</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">⭐</div>
+                                <div class="tool-name">Favorites</div>
+                                <div class="tool-desc">Save important threads</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">👥</div>
+                                <div class="tool-name">Followers</div>
+                                <div class="tool-desc">Manage your network</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🔍</div>
+                                <div class="tool-name">Search</div>
+                                <div class="tool-desc">Find threads and users</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tools Section -->
+                    <div id="tools" class="page-section">
+                        <div class="page-header">
+                            <i class="fas fa-toolbox"></i>
+                            <div class="page-header-content">
+                                <h1>Tools & Utilities</h1>
+                                <p>Powerful tools for social media management</p>
+                            </div>
+                        </div>
+                        <div class="tools-grid">
+                            <div class="tool-card">
+                                <div class="tool-icon">⬇️</div>
+                                <div class="tool-name">Bulk Downloader</div>
+                                <div class="tool-desc">Download multiple posts and videos</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">✏️</div>
+                                <div class="tool-name">Caption Generator</div>
+                                <div class="tool-desc">Generate engaging captions with AI</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">📅</div>
+                                <div class="tool-name">Schedule Posts</div>
+                                <div class="tool-desc">Plan and schedule your content</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🎨</div>
+                                <div class="tool-name">Image Editor</div>
+                                <div class="tool-desc">Edit and enhance your images</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🔍</div>
+                                <div class="tool-name">Hashtag Analyzer</div>
+                                <div class="tool-desc">Analyze trending hashtags</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">📊</div>
+                                <div class="tool-name">Analytics</div>
+                                <div class="tool-desc">Track your overall performance</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings" class="page-section">
+                        <div class="page-header">
+                            <i class="fas fa-cog"></i>
+                            <div class="page-header-content">
+                                <h1>Settings</h1>
+                                <p>Configure your preferences</p>
+                            </div>
+                        </div>
+                        <div class="tools-grid">
+                            <div class="tool-card">
+                                <div class="tool-icon">👤</div>
+                                <div class="tool-name">Profile Settings</div>
+                                <div class="tool-desc">Manage your profile information</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🔐</div>
+                                <div class="tool-name">Security</div>
+                                <div class="tool-desc">Update password and security settings</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🔔</div>
+                                <div class="tool-name">Notifications</div>
+                                <div class="tool-desc">Configure notification preferences</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🌙</div>
+                                <div class="tool-name">Theme</div>
+                                <div class="tool-desc">Choose your preferred theme</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🌐</div>
+                                <div class="tool-name">Language</div>
+                                <div class="tool-desc">Select your language</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">💾</div>
+                                <div class="tool-name">Data & Storage</div>
+                                <div class="tool-desc">Manage your data and cache</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <script>
+            function showSection(sectionId) {
+                // Hide all sections
+                const sections = document.querySelectorAll('.dashboard, .page-section');
+                sections.forEach(section => section.classList.remove('active'));
+
+                // Remove active class from all menu items
+                const menuItems = document.querySelectorAll('.sidebar-item');
+                menuItems.forEach(item => item.classList.remove('active'));
+
+                // Show selected section
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.classList.add('active');
+                }
+
+                // Add active class to clicked menu item
+                event.target.closest('.sidebar-item')?.classList.add('active');
+            }
+        </script>
     </body>
 </html>

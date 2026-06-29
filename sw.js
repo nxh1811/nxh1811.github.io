@@ -1,2 +1,26 @@
-/* xh-cache-version: 2026-06-29-redirect-fix */
-if(!self.define){let e,s={};const n=(n,t)=>(n=new URL(n+".js",t).href,s[n]||new Promise((s=>{if("document"in self){const e=document.createElement("script");e.src=n,e.onload=s,document.head.appendChild(e)}else e=n,importScripts(n),s()})).then((()=>{let e=s[n];if(!e)throw new Error(`Module ${n} didn’t register its module`);return e})));self.define=(t,i)=>{const c=e||("document"in self?document.currentScript.src:"")||location.href;if(s[c])return;let o={};const r=e=>n(e,c),u={module:{uri:c},exports:o,require:r};s[c]=Promise.all(t.map((e=>u[e]||r(e)))).then((e=>(i(...e),o)))}}define(["./workbox-4f46c945"],(function(e){"use strict";self.addEventListener("message",(e=>{e.data&&"SKIP_WAITING"===e.data.type&&self.skipWaiting()})),e.precacheAndRoute([{url:"icon-192.png",revision:"8836dfdcc80306052849373f951899ed"},{url:"icon-512.png",revision:"1d8028d37f4b74c17e9b3db54d042d48"},{url:"manifest.webmanifest",revision:"8bc1163a4d9fbb59d3fc5d1da21a8125"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html"),{denylist:[/^\/entry\//]})),e.registerRoute((({request:e})=>"script"===e.destination||"style"===e.destination),new e.NetworkFirst({cacheName:"static-resources-xh-redirect-fix",networkTimeoutSeconds:3,plugins:[new e.ExpirationPlugin({maxEntries:100,maxAgeSeconds:604800}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute((({request:e})=>"image"===e.destination),new e.CacheFirst({cacheName:"images-xh-redirect-fix",plugins:[new e.ExpirationPlugin({maxEntries:60,maxAgeSeconds:2592e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute((({request:e})=>"document"===e.destination),new e.NetworkFirst({cacheName:"documents-xh-redirect-fix",networkTimeoutSeconds:5,plugins:[new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET")}));
+self.addEventListener('install', event => {
+    self.skipWaiting();
+    event.waitUntil(
+        caches
+            .keys()
+            .then(keys => Promise.all(keys.map(key => caches.delete(key))))
+            .catch(() => undefined)
+    );
+});
+
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        Promise.all([
+            caches
+                .keys()
+                .then(keys => Promise.all(keys.map(key => caches.delete(key))))
+                .catch(() => undefined),
+            self.registration.unregister(),
+            self.clients.claim()
+        ])
+    );
+});
+
+self.addEventListener('fetch', () => {
+    return;
+});

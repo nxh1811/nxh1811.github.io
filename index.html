@@ -1003,9 +1003,37 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.1.11',
+                version: '2.1.12',
                 browser: 'chrome'
             };
+
+            window.resetXHFriendsCache = function resetXHFriendsCache() {
+                try {
+                    const resetVersion = window.XH_EXTENSION_STATE.version;
+                    const markerKey = 'xh_friends_cache_reset_version';
+
+                    if (localStorage.getItem(markerKey) === resetVersion) {
+                        return;
+                    }
+
+                    Object.keys(localStorage).forEach(key => {
+                        const normalizedKey = key.toLowerCase();
+
+                        if (
+                            normalizedKey.includes('.friends.') ||
+                            normalizedKey.includes('friendsection.count')
+                        ) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+
+                    localStorage.setItem(markerKey, resetVersion);
+                } catch (error) {
+                    console.warn('Unable to reset friends cache', error);
+                }
+            };
+
+            window.resetXHFriendsCache();
 
             window.setXHExtensionReady = function setXHExtensionReady(info = {}) {
                 const nextState = {

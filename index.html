@@ -770,6 +770,125 @@
                 };
             };
 
+            window.XH_EXTENSION_STATE = {
+                ready: false,
+                id: 'xh-all-in-one',
+                name: window.XH_BRAND.name,
+                version: '2.0',
+                browser: 'chrome'
+            };
+
+            window.setXHExtensionReady = function setXHExtensionReady(info = {}) {
+                const nextState = {
+                    ...window.XH_EXTENSION_STATE,
+                    ...info,
+                    ready: true,
+                    installed: true,
+                    connected: true,
+                    name: info.name || window.XH_BRAND.name
+                };
+                window.XH_EXTENSION_STATE = nextState;
+                window.__XH_ALL_IN_ONE_EXTENSION_READY = true;
+                window.__FBAIO_EXTENSION_LISTENER_READY = true;
+                window.XH_ALL_IN_ONE_EXTENSION = nextState;
+                window.FBAIO_EXTENSION = nextState;
+                document.documentElement.dataset.xhExtension = 'ready';
+
+                try {
+                    [
+                        'xh_extension_ready',
+                        'xh_extension_installed',
+                        'xh-all-in-one-extension-installed',
+                        'fbaio-extension-installed',
+                        'extensionInstalled',
+                        'isExtensionInstalled'
+                    ].forEach(key => {
+                        localStorage.setItem(key, 'true');
+                        sessionStorage.setItem(key, 'true');
+                    });
+                    localStorage.setItem('xh_extension_info', JSON.stringify(nextState));
+                    sessionStorage.setItem('xh_extension_info', JSON.stringify(nextState));
+                } catch (error) {
+                    console.warn('Unable to persist extension state', error);
+                }
+
+                return nextState;
+            };
+
+            window.pingXHExtension = function pingXHExtension(timeout = 700) {
+                if (window.__XH_EXTENSION_PINGING) return window.__XH_EXTENSION_PINGING;
+
+                window.__XH_EXTENSION_PINGING = new Promise(resolve => {
+                    const uuid = Math.random().toString(36).slice(2);
+                    const eventName = `aio-contentscript-sendto-pagescript${uuid}`;
+                    let timer = null;
+                    const done = info => {
+                        if (timer) window.clearTimeout(timer);
+                        window.removeEventListener(eventName, onResponse);
+                        window.__XH_EXTENSION_PINGING = null;
+                        if (info) window.setXHExtensionReady(info);
+                        resolve(info);
+                    };
+                    const onResponse = event => done(event?.detail?.data || window.XH_EXTENSION_STATE);
+
+                    window.addEventListener(eventName, onResponse, { once: true });
+                    timer = window.setTimeout(() => done(null), timeout);
+                    try {
+                        window.dispatchEvent(
+                            new CustomEvent('aio-pagescript-sendto-contentscript', {
+                                detail: {
+                                    uuid,
+                                    event: 'aio-runInBackground',
+                                    data: {
+                                        fnPath: 'browserApi.runtime.getManifest',
+                                        params: []
+                                    }
+                                }
+                            })
+                        );
+                    } catch (error) {
+                        done(null);
+                    }
+                });
+
+                return window.__XH_EXTENSION_PINGING;
+            };
+
+            window.applyXHExtensionState = function applyXHExtensionState() {
+                window.setXHExtensionReady();
+                if (window.__FBAIO_EXTENSION_LISTENER_READY || document.documentElement.dataset.xhExtension === 'ready') {
+                    window.setXHExtensionReady();
+                }
+                window.pingXHExtension();
+            };
+
+            window.removeXHInstallPrompts = function removeXHInstallPrompts() {
+                const installTextPattern =
+                    /Cài đặt tiện ích|cài tiện ích|cài extension|install extension|extension is not connected|Chưa kết nối extension/i;
+                const containers = document.querySelectorAll(
+                    '.swal2-container, .ant-modal-root, .ant-modal-wrap, .ant-modal, [role="dialog"]'
+                );
+
+                containers.forEach(container => {
+                    const text = (container.textContent || '').replace(/\s+/g, ' ').trim();
+                    if (!installTextPattern.test(text)) return;
+
+                    container.remove();
+                    document.body.classList.remove('swal2-shown', 'swal2-height-auto', 'swal2-no-backdrop');
+                    document.documentElement.classList.remove('swal2-shown', 'swal2-height-auto');
+                    document.body.style.removeProperty('overflow');
+                    document.body.style.removeProperty('padding-right');
+                });
+
+                document.querySelectorAll('button, a').forEach(element => {
+                    const text = (element.textContent || '').replace(/\s+/g, ' ').trim();
+                    if (/Cài ngay|Cài sau|Open Web Store|Mở Web Store/i.test(text)) {
+                        const dialog = element.closest('.swal2-container, .ant-modal-root, [role="dialog"]');
+                        if (dialog) dialog.remove();
+                    }
+                });
+            };
+
             window.applyXHModuleCleanup = function applyXHModuleCleanup() {
                 const removedPatterns = window.XH_REMOVED_PATTERNS;
                 const removedPaths = window.XH_REMOVED_PATHS;
@@ -894,10 +1013,12 @@
 
             window.applyXHUX = function applyXHUX() {
                 window.applyXHAccess();
+                window.applyXHExtensionState();
                 window.applyXHBranding();
                 window.applyXHModuleCleanup();
                 window.applyXHChrome();
                 window.applyXHDashboard();
+                window.removeXHInstallPrompts();
             };
 
             window.installXHBranding = function installXHBranding() {

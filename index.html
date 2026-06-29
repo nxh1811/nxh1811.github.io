@@ -646,14 +646,36 @@
             window.XH_VIP_STATE = {
                 active: true,
                 isVip: true,
+                isVIP: true,
                 vip: true,
+                premium: true,
+                pro: true,
                 plan: 'vip',
                 tier: 'vip',
                 role: 'vip',
                 status: 'active',
                 permissions: ['*'],
                 features: ['*'],
-                expiresAt: '2099-12-31T23:59:59.999Z'
+                expiresAt: '2099-12-31T23:59:59.999Z',
+                expiredAt: '2099-12-31T23:59:59.999Z',
+                vipExpiredAt: '2099-12-31T23:59:59.999Z',
+                expires: 4102444799999,
+                expiredTime: 4102444799999,
+                expireTime: 4102444799999,
+                vipExpiredTime: 4102444799999,
+                vipExpireTime: 4102444799999,
+                BEVIPExpiredTime: 4102444799999
+            };
+
+            window.XH_VIP_PROFILE = {
+                id: 'nxh1811',
+                uid: 'nxh1811',
+                fbUid: '10000070356',
+                name: 'Xuan Hoa Nguyen',
+                displayName: 'Xuân Hoà',
+                username: 'nxh1811',
+                email: '',
+                ...window.XH_VIP_STATE
             };
 
             window.applyXHBranding = function applyXHBranding() {
@@ -738,6 +760,20 @@
             window.applyXHAccess = function applyXHAccess() {
                 try {
                     const serialized = JSON.stringify(window.XH_VIP_STATE);
+                    const profileSerialized = JSON.stringify(window.XH_VIP_PROFILE);
+                    const vipExpiredTime = {
+                        '*': 4102444799999,
+                        all: 4102444799999,
+                        vip: 4102444799999,
+                        download: 4102444799999,
+                        downloader: 4102444799999,
+                        messages: 4102444799999,
+                        posts: 4102444799999,
+                        activities: 4102444799999,
+                        friends: 4102444799999,
+                        groups: 4102444799999,
+                        pages: 4102444799999
+                    };
                     [
                         'xh_access',
                         'xh_user_plan',
@@ -746,28 +782,133 @@
                         'userSubscription',
                         'vip',
                         'isVip',
+                        'isVIP',
                         'license',
-                        'permissions'
+                        'permissions',
+                        'featureAccess',
+                        'vipFeatures'
                     ].forEach(key => {
                         localStorage.setItem(key, serialized);
                         sessionStorage.setItem(key, serialized);
                     });
+                    [
+                        'profile',
+                        'user',
+                        'currentUser',
+                        'account',
+                        'me',
+                        'authUser',
+                        'xh_profile',
+                        'xh_user'
+                    ].forEach(key => {
+                        localStorage.setItem(key, profileSerialized);
+                        sessionStorage.setItem(key, profileSerialized);
+                    });
+                    [
+                        'BEVIPExpiredTime',
+                        'VIPExpiredTime',
+                        'vipExpiredTime',
+                        'vip_expired_time',
+                        'vipExpireTime',
+                        'premiumExpiredTime',
+                        'expiredTime'
+                    ].forEach(key => {
+                        localStorage.setItem(key, JSON.stringify(vipExpiredTime));
+                        sessionStorage.setItem(key, JSON.stringify(vipExpiredTime));
+                    });
                     localStorage.setItem('plan', 'vip');
                     localStorage.setItem('role', 'vip');
                     localStorage.setItem('isVip', 'true');
+                    localStorage.setItem('isVIP', 'true');
                     localStorage.setItem('premium', 'true');
+                    localStorage.setItem('pro', 'true');
                     sessionStorage.setItem('plan', 'vip');
                     sessionStorage.setItem('role', 'vip');
                     sessionStorage.setItem('isVip', 'true');
+                    sessionStorage.setItem('isVIP', 'true');
                     sessionStorage.setItem('premium', 'true');
+                    sessionStorage.setItem('pro', 'true');
+
+                    const defaultPersistKeys = [
+                        'facebook-all-in-one-extension',
+                        'fb-all-in-one-extension',
+                        'fb-aio-extension',
+                        'fbaio-extension',
+                        'xh-all-in-one-extension',
+                        'xH all in one-extension'
+                    ];
+                    const persistKeys = new Set(defaultPersistKeys);
+                    Object.keys(localStorage).forEach(key => {
+                        if (!/extension|all-in-one|fbaio/i.test(key) || /installed|ready|connected/i.test(key)) return;
+                        const current = localStorage.getItem(key) || '';
+                        if (current.trim().startsWith('{') && current.includes('persist')) persistKeys.add(key);
+                    });
+
+                    const basePersist = {
+                        smoothScroll: false,
+                        compactMode: false,
+                        devMode: true,
+                        muted: false,
+                        darkMode: true,
+                        profile: window.XH_VIP_PROFILE,
+                        platform: null,
+                        friendsByUid: {},
+                        notifications: [],
+                        language: localStorage.getItem('language') || 'vi',
+                        sharedPostURL: null,
+                        sharedPostTime: null,
+                        BEVIPExpiredTime: vipExpiredTime,
+                        cached: {},
+                        aiSettings: {
+                            provider: 'anthropic',
+                            apiKey: '',
+                            model: 'claude-sonnet',
+                            apiBaseUrl: '',
+                            apiEndpoint: ''
+                        }
+                    };
+
+                    persistKeys.forEach(key => {
+                        let nextValue = { state: { persist: basePersist }, version: 0 };
+                        const shouldSeedMissing = defaultPersistKeys.includes(key);
+                        try {
+                            const current = localStorage.getItem(key);
+                            if (current) {
+                                const parsed = JSON.parse(current);
+                                const state = parsed.state || {};
+                                const persist = state.persist || parsed.persist || {};
+                                nextValue = {
+                                    ...parsed,
+                                    state: {
+                                        ...state,
+                                        persist: {
+                                            ...basePersist,
+                                            ...persist,
+                                            devMode: true,
+                                            profile: window.XH_VIP_PROFILE,
+                                            BEVIPExpiredTime: {
+                                                ...(persist.BEVIPExpiredTime || {}),
+                                                ...vipExpiredTime
+                                            }
+                                        }
+                                    },
+                                    version: parsed.version ?? 0
+                                };
+                            } else if (!shouldSeedMissing) {
+                                return;
+                            }
+                        } catch (error) {}
+                        localStorage.setItem(key, JSON.stringify(nextValue));
+                    });
                 } catch (error) {
                     console.warn('Unable to persist VIP state', error);
                 }
 
                 window.__XH_USER__ = {
                     ...(window.__XH_USER__ || {}),
-                    ...window.XH_VIP_STATE
+                    ...window.XH_VIP_PROFILE
                 };
+                window.__XH_PROFILE__ = window.XH_VIP_PROFILE;
             };
 
             window.XH_EXTENSION_STATE = {
@@ -864,7 +1005,7 @@
 
             window.removeXHInstallPrompts = function removeXHInstallPrompts() {
                 const installTextPattern =
-                    /Cài đặt tiện ích|cài tiện ích|cài extension|cần tiện ích|install extension|extension is not connected|Chưa kết nối extension/i;
+                    /Cài đặt tiện ích|cài tiện ích|cài extension|cần tiện ích|install extension|extension is not connected|Chưa kết nối extension|Mở khoá VIP|Mở khóa VIP|Mở khoá tính năng|Mở khóa tính năng|Lên VIP|Dùng thử|Xem bảng giá|VIP có gì|Unlock VIP|Unlock feature|Trial/i;
                 const containers = document.querySelectorAll(
                     '.swal2-container, .ant-modal-root, .ant-modal-wrap, .ant-modal, .ant-alert, [role="alert"], [role="dialog"]'
                 );
@@ -882,7 +1023,7 @@
 
                 document.querySelectorAll('button, a').forEach(element => {
                     const text = (element.textContent || '').replace(/\s+/g, ' ').trim();
-                    if (/Cài ngay|Cài sau|Open Web Store|Mở Web Store/i.test(text)) {
+                    if (/Cài ngay|Cài sau|Open Web Store|Mở Web Store|Lên VIP|Xem bảng giá|Dùng thử|VIP có gì|Trợ giúp/i.test(text)) {
                         const dialog = element.closest('.swal2-container, .ant-modal-root, [role="dialog"]');
                         if (dialog) dialog.remove();
                     }

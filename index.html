@@ -1009,7 +1009,7 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.1.9',
+                version: '2.1.10',
                 browser: 'chrome'
             };
 
@@ -1166,6 +1166,18 @@
                     element.closest(
                         'li, .ant-menu-item, .ant-menu-submenu, .ant-menu-submenu-title, .ant-dropdown-menu-item, [role="menuitem"], [class*="menu-item"], [class*="submenu"]'
                     );
+                const isTableSurface = element =>
+                    Boolean(
+                        element?.closest(
+                            '.ant-table, .ant-table-wrapper, .ant-table-title, .ant-table-container, .ant-table-content, .ant-table-thead, .ant-table-tbody'
+                        )
+                    );
+                const isNavigationSurface = element =>
+                    Boolean(
+                        element?.closest(
+                            'aside, nav, .ant-layout-sider, .ant-menu, .ant-dropdown-menu, [role="navigation"], [data-menu-id]'
+                        )
+                    );
                 const hideElement = element => {
                     if (!element) return;
                     element.classList.add('xh-hidden-module');
@@ -1178,17 +1190,32 @@
                     const label = [element.getAttribute('title'), element.getAttribute('aria-label'), element.textContent]
                         .filter(Boolean)
                         .join(' ');
-                    if (shouldRemoveText(label)) hideElement(closestMenuNode(element) || element);
+                    if (!shouldRemoveText(label)) return;
+                    const menuNode = closestMenuNode(element);
+                    if (menuNode) {
+                        hideElement(menuNode);
+                        return;
+                    }
+                    if (isTableSurface(element)) return;
+                    if (isNavigationSurface(element)) hideElement(element);
                 });
 
                 document.querySelectorAll('a[href]').forEach(anchor => {
                     const text = anchor.textContent || '';
                     const path = getPathFromHref(anchor.getAttribute('href'));
+                    const menuNode = closestMenuNode(anchor);
                     const isHelpSettings =
-                        shouldRemoveText(anchor.closest('li, .ant-menu-submenu, [role="menuitem"]')?.textContent) &&
+                        shouldRemoveText(menuNode?.textContent) &&
                         isSettingsText(text);
                     if (!isHelpSettings && (shouldRemovePath(path) || shouldRemoveText(text))) {
-                        hideElement(closestMenuNode(anchor) || anchor.closest('.ant-card, section, article') || anchor);
+                        if (menuNode) {
+                            hideElement(menuNode);
+                            return;
+                        }
+                        if (isTableSurface(anchor)) return;
+                        if (isNavigationSurface(anchor) || shouldRemovePath(path)) {
+                            hideElement(anchor.closest('.ant-card, section, article') || anchor);
+                        }
                     }
                     if (isHelpSettings) {
                         anchor.setAttribute('href', '#/settings');
@@ -1207,6 +1234,7 @@
                             });
                             return;
                         }
+                        if (isTableSurface(element)) return;
                         if (shouldRemoveText(text)) hideElement(element);
                     }
                 );
@@ -1220,6 +1248,7 @@
                         node.parentElement?.closest('div, span, header')?.classList.add('xh-hidden-announcement');
                     }
                     if (!shouldRemoveText(text)) return;
+                    if (isTableSurface(node.parentElement)) return;
                     const section = node.parentElement?.closest('section, .ant-card, .ant-row, .ant-list, article');
                     if (section) hideElement(section);
                 });
